@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 import { nanoid } from 'nanoid';
 
 import ContactForm from './ContactForm/ContactForm';
 import Filter from './Filter/Filter';
 import ContactList from './ContactList/ContactList';
 
-const App = () => {
-  const initState = {
+class App extends Component {
+  state = {
     contacts: [
       { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
       { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
@@ -16,14 +16,12 @@ const App = () => {
     filter: '',
   };
 
-  const [state, setState] = useState(initState);
-
-  const formSubmitHandler = newContactData => {
-    const contactNames = state.contacts.map(contact => contact.name);
+  formSubmitHandler = newContactData => {
+    const contactNames = this.state.contacts.map(contact => contact.name);
 
     if (!contactNames.includes(newContactData.name)) {
       const extendedContacts = [
-        ...state.contacts,
+        ...this.state.contacts,
         {
           id: nanoid(),
           name: newContactData.name,
@@ -31,50 +29,45 @@ const App = () => {
         },
       ];
 
-      setState(prevState => ({
-        ...prevState,
-        contacts: extendedContacts,
-      }));
+      this.setState({ contacts: extendedContacts });
     } else {
       alert(`${newContactData.name} is already in contacts.`);
     }
   };
 
-  const deleteContactHandler = deletedContactId => {
-    const updatedContacts = state.contacts.filter(
+  deleteContactHandler = deletedContactId => {
+    const updatedContacts = this.state.contacts.filter(
       contact => contact.id !== deletedContactId
     );
-    setState(prevState => ({
-      ...prevState,
-      contacts: [...updatedContacts],
-    }));
+    this.setState({ contacts: updatedContacts });
   };
 
-  const changeFilterHandler = filterData => {
-    setState(prevState => ({
-      ...prevState,
+  changeFilterHandler = filterData => {
+    this.setState({
       filter: `${filterData}`,
-    }));
+    });
   };
 
-  const filteredArray = contacts => {
+  filteredArray = contacts => {
     return contacts.filter(contact =>
-      contact.name.toUpperCase().includes(state.filter)
+      contact.name.toUpperCase().includes(this.state.filter)
     );
   };
 
-  return (
-    <div>
-      <h2>Phonebook</h2>
-      <ContactForm onSubmitData={formSubmitHandler} />
-      <h2>Contacts</h2>
-      <Filter onChangeFilter={changeFilterHandler} />
-      <ContactList
-        contacts={filteredArray(state.contacts)}
-        onDelete={deleteContactHandler}
-      />
-    </div>
-  );
-};
+  render() {
+    return (
+      <div>
+        <h2>Phonebook</h2>
+        <ContactForm onSubmitData={this.formSubmitHandler} />
+        <h2>Contacts</h2>
+        <Filter onChangeFilter={this.changeFilterHandler} />
+        <ContactList
+          contacts={this.filteredArray(this.state.contacts)}
+          onDelete={this.deleteContactHandler}
+        />
+      </div>
+    );
+  }
+}
 
 export default App;
