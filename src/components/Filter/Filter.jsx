@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import PropTypes from 'prop-types';
 
 class Filter extends Component {
   setFilterValue = event => {
-    const value = event.currentTarget.value.toUpperCase();
+    const value = event.target.value.toLowerCase();
 
     this.props.onChangeFilter(value);
   };
